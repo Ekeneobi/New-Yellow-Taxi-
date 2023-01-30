@@ -28,7 +28,7 @@ def main(params):
       os.system(f"wget {url} -O {parquet_name}")
 
       
-      engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}', pool_pre_ping=True, connect_args={"keepalives": 1,"keepalives_idle": 30, "keepalives_interval": 10,"keepalives_count": 5,})
+      engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
 
 
 
@@ -36,16 +36,16 @@ def main(params):
       df = pq.read_table(parquet_name)
       df = df.to_pandas()
 
-      df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-      df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+      df.lpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
+      df.lpep_dropoff_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
 
       df.head(n=0).to_sql(name=table_name, con=engine, if_exists='replace')
 
-      df.to_sql(name=table_name, con=engine,  if_exists='replace')
+      df.to_sql(name=table_name, con=engine, if_exists='replace')
 
       
 if __name__ == '__main__':
-      parser = argparse.ArgumentParser(description='Ingest Pargquet data to Postgres')
+      parser = argparse.ArgumentParser(description='Ingest Parquet data to Postgres')
 
       parser.add_argument('--user',required=True, help='user name for postgres')
       parser.add_argument('--password', required=True, help='password for postgres')
